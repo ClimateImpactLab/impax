@@ -49,8 +49,8 @@ extensions = [
     'sphinx.ext.intersphinx']
 
 extlinks = {
-    'issue': ('https://github.com/]/impax/issues/%s', 'GH #'),
-    'pull': ('https://github.com/]/impax/pull/%s', 'PR #')}
+    'issue': ('https://github.com/ClimateImpactLab/impax/issues/%s', 'GH #'),
+    'pull': ('https://github.com/ClimateImpactLab/impax/pull/%s', 'PR #')}
 
 napoleon_numpy_docstring = True
 
@@ -68,7 +68,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'impax'
-copyright = u"2017, ]"
+copyright = u"2017, ClimateImpactLab"
 
 # The version info for the project you're documenting, acts as replacement
 # for |version| and |release|, also used in various other places throughout
@@ -223,7 +223,7 @@ latex_elements = {
 latex_documents = [
     ('index', 'impax.tex',
      u'impax Documentation',
-     u']', 'manual'),
+     u'ClimateImpactLab', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at
@@ -254,7 +254,7 @@ latex_documents = [
 man_pages = [
     ('index', 'impax',
      u'impax Documentation',
-     [u']'], 1)
+     [u'ClimateImpactLab'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -269,7 +269,7 @@ man_pages = [
 texinfo_documents = [
     ('index', 'impax',
      u'impax Documentation',
-     u']',
+     u'ClimateImpactLab',
      'impax',
      'One line description of project.',
      'Miscellaneous'),
