@@ -254,7 +254,7 @@ latex_documents = [
 man_pages = [
     ('index', 'impax',
      u'impax Documentation',
-     [u'ClimateImpactLab'], 1)
+     u'ClimateImpactLab', 1)
 ]
 
 # If true, show URL addresses after external links.

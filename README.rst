@@ -6,15 +6,15 @@ impax
 .. image:: https://img.shields.io/pypi/v/impax.svg
         :target: https://pypi.python.org/pypi/impax
 
-.. image:: https://img.shields.io/travis/]/impax.svg
-        :target: https://travis-ci.org/]/impax
+.. image:: https://img.shields.io/travisClimateImpactLab/impax.svg
+        :target: https://travis-ci.org/ClimateImpactLab/impax
 
 .. image:: https://readthedocs.org/projects/impax/badge/?version=latest
         :target: https://impax.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
-.. image:: https://pyup.io/repos/github/]/impax/shield.svg
-     :target: https://pyup.io/repos/github/]/impax/
+.. image:: https://pyup.io/repos/github/ClimateImpactLab/impax/shield.svg
+     :target: https://pyup.io/repos/github/ClimateImpactLab/impax/
      :alt: Updates
 
 
@@ -34,11 +34,11 @@ the readme.*
 
 1.  Create a matching repository on github if you haven't already:
 
-    a.  go to https://github.com/organizations/]/repositories/new
+    a.  go to https://github.com/organizations/ClimateImpactLab/repositories/new
     b.  enter the following information:
 
         owner
-            ]
+            ClimateImpactLab
 
         Repository Name
             impax
@@ -60,7 +60,7 @@ the readme.*
         git init
         git add .
         git commit -m "initial commit"
-        git remote add origin git@github.com:]/impax.git
+        git remote add origin git@github.com:ClimateImpactLab/impax.git
         git push -u origin master
 
 3.  Set up automated testing, coverage, updates, and docs:
@@ -69,12 +69,12 @@ the readme.*
 
         i.      go to https://travis-ci.org/ and sign in/sign up with github.
                 Make sure travis has access to the repositories on your github
-                account *and* those owned by the ] by enabling
+                account *and* those owned by the ClimateImpactLab by enabling
                 access in your account settings.
         ii.     Next to "My Repositories" click the '+' icon
-        iii.    Flip the switch on ]/impax. If
+        iii.    Flip the switch on ClimateImpactLab/impax. If
                 you don't see it in the list, click 'Sync account', and make
-                sure you are looking at the ] repositories.
+                sure you are looking at the ClimateImpactLab repositories.
         iv.     Push a change to your package (for example, you could delete
                 this section). You should see tests start running on travis
                 automatically.
@@ -86,12 +86,12 @@ the readme.*
 
         i.      go to https://readthedocs.io and sign in/sign up with github.
                 Same deal - make sure readthedocs has access to your github
-                account and ].
-        ii.     click 'Import a project', go to ], and refresh.
+                account and ClimateImpactLab.
+        ii.     click 'Import a project', go to ClimateImpactLab, and refresh.
         iii.    click the '+' icon next to
-                ]/impax. Pick a name for your
+                ClimateImpactLab/impax. Pick a name for your
                 project. The name has to be globally unique (not just within
-                the ]), so if you chose something with a common
+                the ClimateImpactLab), so if you chose something with a common
                 name you may have to rename the docs.
         iv.     go to the settings page for your new docs site, and navigate to the 'advanced settings' tab.
                 add `requirements_rtd.txt` to the "requirements file" field.
@@ -105,7 +105,7 @@ the readme.*
 
         i.      go to https://pyup.io. you know the drill.
         ii.     Go to your account, and click '+ Add Repo'. Sync.
-        iii.    Add ]/impax
+        iii.    Add ClimateImpactLab/impax
                 with "Dependency Updates" and "SafetyCI" turned on. Leave 
                 "Update Schedules" off.
 
