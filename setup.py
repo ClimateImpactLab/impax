@@ -33,7 +33,7 @@ setup(
     long_description=readme + '\n\n' + history,
     author="Justin Simcock",
     author_email='jsimcock@rhg.com',
-    url='https://github.com/]/impax',
+    url='https://github.com/ClimateImpactLab/impax',
     packages=find_packages(include=['impax']),
     entry_points={
         'console_scripts': [
