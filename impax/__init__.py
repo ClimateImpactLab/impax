@@ -3,7 +3,7 @@
 """Top-level package for impax."""
 
 from __future__ import absolute_import
-from mins import minimize_polynomial
+from impax.mins import minimize_polynomial
 
 __author__ = """Justin Simcock"""
 __email__ = 'jsimcock@rhg.com'
