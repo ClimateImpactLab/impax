@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-"""Top-level package for impax."""
 
 from __future__ import absolute_import
 from impax.mins import minimize_polynomial
