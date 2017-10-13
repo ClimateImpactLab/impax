@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import os
 import xarray as xr
 import pandas as pd
@@ -6,7 +7,6 @@ from toolz import memoize
 from mins import minimize_polynomial
 import time
 
-from __future__ import absolute_import
 
 
 def construct_weather(**weather):

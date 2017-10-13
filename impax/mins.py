@@ -1,8 +1,8 @@
+from __future__ import absolute_import
 import os
 import xarray as xr
 import numpy as np
 import warnings
-from __future__ import absolute_import
 
 
 
