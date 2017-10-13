@@ -5,7 +5,7 @@ deploy:
   true:
     branch: master
     python: 2.7
-    repo: ClimateImpactLab/iimpax
+    repo: ClimateImpactLab/impax
   distributions: sdist bdist_wheel
   password:
     secure: NzX83HFZn/VLl1cdzIm5oS480Yr9R6Ms+6Z9ePnWoLljzQlQ7rwFob7Y9GQxMlXQCrC+Nof0mprrFJofulAbe/lFmCf2LGE/u+DO2igRhjxrY7g9VHQCw5wsPY2HZE9mtHX/L+ZH2aKp/neWuda4qxP/TVMzbxtUd6WGOhWrZTvAR1usP0JuXibd85k7Xiy1bB5XzfpvN8k1R8rP8quPU1wh88xBna9cZX78tvyxSuktc+lgPEfcfkJjvAd+F1OkNsFlHsa+YISzkULwWQqu/DQ8eJt/FnEKEw0YG5Fmww4M/l9ATwII0c1IuMmA1D8WJZN8rI1iOYYeyXvju8+ut4cnMn69ZpKUkf7OpudI1VgA8+0z0DAJAjagLZdqNrlDKBYGcAd8KH4+WbDulCOTldlhmg4FuHsnBdGhxLM0GNOjMzP3nqmXHoeCriYaNXMsGDw54GFGVQCkZef+3y5ixWKP4nrFsPdOjpkhjuUiDnHgSZCKfwXs6B85pKFclslnKUsRcOXyrQjIsZeb0CbjSDjmmzAlXaDWCiUttso6UllnCSymdstFEVkmENCd/yFGYuMdC/V/X5nQ4M6qxxWdeAZzFk4flqpGlIPVUuraCne+hVnWbTRlG4gATXlDtJzqcKJfIWCxVlmxqf4ME2cK1x4th2xbl7u6ae91pUXNB+s=

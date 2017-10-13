@@ -4,7 +4,7 @@ import xarray as xr
 import pandas as pd
 import numpy as np
 from toolz import memoize
-from mins import minimize_polynomial
+from impax.mins import minimize_polynomial
 import time
 
 
