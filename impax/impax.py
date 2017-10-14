@@ -177,7 +177,7 @@ class Impact(object):
             impact_flatcurve = self.impact_function(betas, t_star)
 
             #Compare values and evaluate a max
-            impact = xr.ufuncs.maximum(impact, impact_flatcurve)
+            impact = xr.ufuncs.maximum((impact - impact_flatcurve), 0)
 
         impact = self.postprocess_daily(impact)
 
