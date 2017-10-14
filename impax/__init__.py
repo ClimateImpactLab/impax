@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from impax.mins import minimize_polynomial
 from impax.csvv import get_gammas
+from impax.impax import construct_covars, construct_weather
 
 __author__ = """Justin Simcock"""
 __email__ = 'jsimcock@rhg.com'
