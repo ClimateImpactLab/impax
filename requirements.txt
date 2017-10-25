@@ -1,5 +1,5 @@
 click
 pandas
 xarray
-numpy
+numpy==1.13.3
 toolz
