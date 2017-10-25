@@ -1,5 +1,5 @@
 pandas==0.20.3
 xarray
 numpy 
-scipy
+scipy==1.0.0
 toolz
