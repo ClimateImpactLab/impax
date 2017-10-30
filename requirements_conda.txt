@@ -1,4 +1,4 @@
-pandas==0.20.3
+pandas==0.21.0
 xarray==0.9.6
 numpy==1.13.3 
 scipy==1.0.0
