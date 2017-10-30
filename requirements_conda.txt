@@ -2,4 +2,4 @@ pandas==0.20.3
 xarray
 numpy 
 scipy
-toolz
+toolz==0.8.2
