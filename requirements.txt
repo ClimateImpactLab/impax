@@ -4,7 +4,4 @@ xarray==0.9.6
 scipy==1.0
 numpy==13.1
 toolz
-flake==3.5.0
-sphinx==1.6.5
-cryptography==2.1.2
-pytest-runer==3.0
+
