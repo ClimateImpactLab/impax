@@ -6,7 +6,7 @@ impax
 .. image:: https://img.shields.io/pypi/v/impax.svg
         :target: https://pypi.python.org/pypi/impax
 
-.. image:: https://img.shields.io/travisClimateImpactLab/impax.svg
+.. image:: https://img.shields.io/travis/ClimateImpactLab/impax.svg
         :target: https://travis-ci.org/ClimateImpactLab/impax
 
 .. image:: https://readthedocs.org/projects/impax/badge/?version=latest
