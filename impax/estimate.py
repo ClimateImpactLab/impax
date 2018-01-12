@@ -31,20 +31,21 @@ def read_csvv(csvv_path):
 
         for row in reader:
             if row[0] == 'gamma':
-                data['gamma'] = np.array([float(i) for i in reader.next()])
+                data['gamma'] = np.array([float(i) for i in next(reader)])
             if row[0] == 'gammavcv':
-                data['gammavcv'] = np.array([float(i) for i in reader.next()])
+                data['gammavcv'] = np.array([float(i) for i in next(reader)])
             if row[0] == 'residvcv':
-                data['residvcv'] = np.array([float(i) for i in reader.next()])
+                data['residvcv'] = np.array([float(i) for i in next(reader)])
             if row[0] == 'prednames':
-                data['prednames'] = [i.strip() for i in reader.next()]
+                data['prednames'] = [i.strip() for i in next(reader)]
             if row[0] == 'covarnames':
-                data['covarnames'] = [i.strip() for i in reader.next()]
+                data['covarnames'] = [i.strip() for i in next(reader)]
             if row[0] == 'outcome': 
-                data['outcome'] =[cv.strip() for cv in reader.next()]
+                data['outcome'] =[cv.strip() for cv in next(reader)]
 
-    index = pd.MultiIndex.from_tuples(zip(data['outcome'], data['prednames'], data['covarnames']), 
-                                            names=['outcome', 'prednames', 'covarnames'])
+    index = pd.MultiIndex.from_tuples(
+        list(zip(data['outcome'], data['prednames'], data['covarnames'])), 
+        names=['outcome', 'prednames', 'covarnames'])
 
     g = MultivariateNormalEstimator(data['gamma'], data['gammavcv'], index)
 
