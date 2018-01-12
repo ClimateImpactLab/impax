@@ -28,11 +28,17 @@ def _findpolymin(coeffs, min_max):
     minx = np.asarray(min_max).min()
     maxx = np.asarray(min_max).max()
 
-    derivcoeffs = np.array(coeffs[1:]) * np.arange(1, len(coeffs)) # Construct the derivative
+    # Construct the derivative
+    derivcoeffs = np.array(coeffs[1:]) * np.arange(1, len(coeffs))
     roots = np.roots(derivcoeffs[::-1])
 
-    # Filter out complex roots; note: have to apply real_if_close to individual values, not array until filtered
-    possibles = filter(lambda root: np.real_if_close(root).imag == 0 and np.real_if_close(root) >= minx and np.real_if_close(root) <= maxx, roots)
+    # Filter out complex roots; note: have to apply real_if_close to individual
+    # values, not array until filtered
+    possibles = (
+        list(filter(
+            lambda root: np.real_if_close(root).imag == 0 and np.real_if_close(root) >= minx and np.real_if_close(root) <= maxx,
+            roots)))
+
     possibles = list(np.real_if_close(possibles)) + [minx, maxx]
 
     with warnings.catch_warnings(): # catch warning from using infs
@@ -56,8 +62,9 @@ def _findpolymin(coeffs, min_max):
 
 def minimize_polynomial(da, dim='prednames', bounds=None):
     '''
-    Constructs the t_star-based weather data array by applying `np.apply_along_axis`
-    to each predictor dimension and construcing data variables up to the order specified in `prednames`
+    Constructs the t_star-based weather data array by applying
+    `np.apply_along_axis` to each predictor dimension and construcing data
+    variables up to the order specified in `prednames`
 
     Parameters
     ----------
@@ -76,10 +83,15 @@ def minimize_polynomial(da, dim='prednames', bounds=None):
         :py:class:`~xarray.DataArray` of reconstructed weather at t_star
 
     '''
-    t_star_values = np.apply_along_axis(_findpolymin, da.get_axis_num(dim), da.values, min_max = bounds)
+    t_star_values = np.apply_along_axis(
+        _findpolymin, da.get_axis_num(dim), da.values, min_max = bounds)
 
-    if t_star_values.shape != tuple([s for i, s in enumerate(da.shape) if i != da.get_axis_num(dim)]):
-        raise ValueError('_findpolymin returned an unexpected shape: {}'.format(t_star_values.shape))
+    if t_star_values.shape != tuple(
+            [s for i, s in enumerate(da.shape) if i != da.get_axis_num(dim)]):
+
+        raise ValueError(
+            '_findpolymin returned an unexpected shape: {}'
+            .format(t_star_values.shape))
 
     t_star = xr.DataArray(
         t_star_values,
@@ -89,6 +101,8 @@ def minimize_polynomial(da, dim='prednames', bounds=None):
     t_star = t_star.expand_dims(dim, axis=da.get_axis_num(dim))
 
     # RPolynomial of length 4 should return terms t, t^2, t^3, t^4.
-    t_star_poly = xr.concat([t_star**i for i in range(1, len(da.coords[dim])+1)], dim=da.coords[dim])
+    t_star_poly = xr.concat(
+        [t_star**i for i in range(1, len(da.coords[dim])+1)],
+        dim=da.coords[dim])
 
     return t_star_poly
