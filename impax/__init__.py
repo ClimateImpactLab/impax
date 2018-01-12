@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 from impax.mins import minimize_polynomial
-from impax.csvv import read_csvv
+from impax.estimate import read_csvv, MultivariateNormalEstimator
 from impax.impax import construct_covars, construct_weather
 
 __author__ = """Justin Simcock"""
@@ -12,7 +12,8 @@ _module_imports = (
     minimize_polynomial,
     construct_covars,
     construct_weather, 
-    read_csvv
+    read_csvv,
+    MultivariateNormalEstimator
 )
 
 __all__ = list(map(lambda x: x.__name__, _module_imports))
