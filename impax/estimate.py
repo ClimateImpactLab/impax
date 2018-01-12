@@ -10,8 +10,8 @@ import warnings
 
 def read_csvv(csvv_path):
     '''
-    Returns the gammas and covariance matrix 
-    
+    Returns the estimator object from a CSVV file
+
     Parameters
     ----------
     path: str_or_buffer
@@ -19,7 +19,7 @@ def read_csvv(csvv_path):
 
     Returns
     -------
-    gamma : Gamma
+    estimator : MultivariateNormalEstimator
         :py:class:`Gamma` object with median and VCV matrix indexed by prednames, covarnames, and outcomes
 
     '''
@@ -46,7 +46,7 @@ def read_csvv(csvv_path):
     index = pd.MultiIndex.from_tuples(zip(data['outcome'], data['prednames'], data['covarnames']), 
                                             names=['outcome', 'prednames', 'covarnames'])
 
-    g = Gammas(data['gamma'], data['gammavcv'], index)
+    g = MultivariateNormalEstimator(data['gamma'], data['gammavcv'], index)
 
     return g 
 
@@ -56,45 +56,47 @@ def get_gammas(*args, **kwargs):
     return read_csvv(*args, **kwargs)
 
 
-class Gammas(object):
+class MultivariateNormalEstimator(object):
     '''
     Stores a median and residual VCV matrix for multidimensional variables with named indices
     and provides multivariate sampling and statistical analysis functions
 
     Parameters
     ----------
-    gammas: array 
-        length $(m1*m2*...*mn)$ 1-d :py:class:`~numpy.array` with median values for multivariate distribution
+    coefficients: array 
+        length $(m1*m2*...*mn)$ 1-d :py:class:`~numpy.array` with regression coefficients
 
-    gammavcv: array
-        $(m1*m2*...*mn)x(m1*m2*...*mn)$ :py:class:`~numpy.array` with covariance matrix for multivariate distribution
+    vcv: array
+        $(m1*m2*...*mn)x(m1*m2*...*mn)$ :py:class:`~numpy.array` with variance-covariance matrix for multivariate distribution
 
-    index: MultiIndex
-        $(m1*m2*...*mn)$ 1-d :py:class:`~pandas.MultiIndex` describing the multivariate space
-    
+    index: Index
+        :py:class:`~pandas.Index` or $(m1*m2*...*mn)$ 1-d :py:class:`~pandas.MultiIndex` describing the multivariate space
+
     '''
 
-    def __init__(self, gammas, gammavcv, index):
-        self.gammas = gammas
-        self.gammavcv = gammavcv
+    def __init__(self, coefficients, vcv, index):
+        self.coefficients = coefficients
+        self.vcv = vcv
         self.index = index
 
     def median(self):
         '''
-        Returns the values in the array of gammas organized according to specification
+        Returns the median values (regression coefficients)
 
         Returns
         -------
         median : xarray.DataArray
-            :py:class `~xarray.DataArray` of gamma coefficients organized by covar and pred
+            :py:class `~xarray.DataArray` of coefficients
         '''
 
-        return pd.Series(self.gammas, index=self.index).to_xarray()
+        return pd.Series(self.coefficients, index=self.index).to_xarray()
 
     def sample(self, seed=None):
         '''
-        Takes a draw from a multivariate distribution and returns a Dataset of coefficients. 
-        Labels on coefficients can be used to construct a specification of the functional form.
+        Sample from the multivariate normal distribution
+        
+        Takes a draw from a multivariate distribution and returns
+        an :py:class:`xarray.DataArray` of parameter estimates.
 
         Returns
         ----------
@@ -103,7 +105,9 @@ class Gammas(object):
 
         '''
         if seed is not None:
-            warnings.warn('Sampling with a seed has been deprecated. In future releases, this will be up to the user.', DeprecationWarning)
+            warnings.warn(
+                'Sampling with a seed has been deprecated. In future releases, this will be up to the user.',
+                DeprecationWarning)
             np.random.seed(seed)
 
-        return pd.Series(mn.rvs(self.gammas, self.gammavcv), index=self.index).to_xarray()
+        return pd.Series(mn.rvs(self.coefficients, self.vcv), index=self.index).to_xarray()
