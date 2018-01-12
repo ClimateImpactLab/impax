@@ -5,6 +5,8 @@ import pandas as pd
 import numpy as np
 from scipy.stats import multivariate_normal as mn
 
+import warnings
+
 
 def read_csvv(csvv_path):
     '''
@@ -100,5 +102,8 @@ class Gammas(object):
             :py:class:`~xarray.DataArray` of parameter estimates drawn from the multivariate normal
 
         '''
+        if seed is not None:
+            warnings.warn('Sampling with a seed has been deprecated. In future releases, this will be up to the user.', DeprecationWarning)
+            np.random.seed(seed)
 
         return pd.Series(mn.rvs(self.gammas, self.gammavcv), index=self.index).to_xarray()
