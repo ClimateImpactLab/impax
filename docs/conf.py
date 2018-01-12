@@ -46,7 +46,8 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.extlinks',
     'sphinx.ext.napoleon',
-    'sphinx.ext.intersphinx']
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.mathjax']
 
 extlinks = {
     'issue': ('https://github.com/ClimateImpactLab/impax/issues/%s', 'GH #'),
@@ -289,5 +290,8 @@ texinfo_documents = [
 
 
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/2.7', None)
+    'python': ('https://docs.python.org/2.7', None),
+    'pandas': ('https://pandas.pydata.org/pandas-docs/stable', None),
+    'numpy': ('http://docs.scipy.org/doc/numpy/', None),
+    'xarray': ('http://xarray.pydata.org/en/latest', None)
 }

@@ -64,13 +64,13 @@ class MultivariateNormalEstimator(object):
     Parameters
     ----------
     coefficients: array 
-        length $(m1*m2*...*mn)$ 1-d :py:class:`~numpy.array` with regression coefficients
+        length :math:`(m_1*m_2*\cdots*m_n)` 1-d :py:class:`numpy.ndarray` with regression coefficients
 
     vcv: array
-        $(m1*m2*...*mn)x(m1*m2*...*mn)$ :py:class:`~numpy.array` with variance-covariance matrix for multivariate distribution
+        :math:`(m_1*m_2*\cdots*m_n) x (m_1*m_2*\cdots*m_n)` :py:class:`numpy.ndarray` with variance-covariance matrix for multivariate distribution
 
     index: Index
-        :py:class:`~pandas.Index` or $(m1*m2*...*mn)$ 1-d :py:class:`~pandas.MultiIndex` describing the multivariate space
+        :py:class:`~pandas.Index` or :math:`(m_1*m_2*\cdots*m_n)` 1-d :py:class:`~pandas.MultiIndex` describing the multivariate space
 
     '''
 
@@ -85,8 +85,8 @@ class MultivariateNormalEstimator(object):
 
         Returns
         -------
-        median : xarray.DataArray
-            :py:class `~xarray.DataArray` of coefficients
+        median : DataArray
+            :py:class:`~xarray.DataArray` of coefficients
         '''
 
         return pd.Series(self.coefficients, index=self.index).to_xarray()
@@ -100,7 +100,7 @@ class MultivariateNormalEstimator(object):
 
         Returns
         ----------
-        draw : xarray.DataArray
+        draw : DataArray
             :py:class:`~xarray.DataArray` of parameter estimates drawn from the multivariate normal
 
         '''
