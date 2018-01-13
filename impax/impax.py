@@ -139,27 +139,15 @@ class Impact(object):
         weather: DataArray
           weather :py:class:`~xarray.DataArray`
 
-        gammas: DataArray
-          covarname by outcome py:class:`~xarray.DataArray`
-
-        gdp_covar: DataArray
-          hierid by gdp :py:class:`~xarray.DataArray`
-
-        clim_covar: DataArray
-          hierid by predname :py:class:`~xarray.DataArray`
-
-        baseline: :py:class:`~xarray.Dataset`
-          precomputed avg baseline impact for impacts between base years
-
-        bounds: list
-          list of values to compute mins for computing m-star
+        betas: DataArray
+          covarname by outcome :py:class:`~xarray.DataArray`
          
         clip_flat_curve: bool
           flag indicating that flat-curve clipping should be performed
           on the result
 
-        t_star_path: str
-          unformatted string path to designate read/write location for t_star
+        t_star: DataArray
+          :py:class:`xarray.DataArray` with minimum temperatures used for clipping
 
 
         Returns
