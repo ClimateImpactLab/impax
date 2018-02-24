@@ -29,7 +29,7 @@ def _findpolymin(coeffs, min_max):
     maxx = np.asarray(min_max).max()
 
     # Construct the derivative
-    derivcoeffs = np.array(coeffs[1:]) * np.arange(1, len(coeffs))
+    derivcoeffs = np.array(coeffs) * np.arange(1, len(coeffs) + 1)
     roots = np.roots(derivcoeffs[::-1])
 
     # Filter out complex roots; note: have to apply real_if_close to individual
@@ -44,7 +44,7 @@ def _findpolymin(coeffs, min_max):
     with warnings.catch_warnings(): # catch warning from using infs
         warnings.simplefilter("ignore")
     
-        values = np.polyval(coeffs[::-1], np.real_if_close(possibles))  
+        values = np.polyval(list(coeffs[::-1]) + [0], np.real_if_close(possibles))  
         
     # polyval doesn't handle infs well
     if minx == -np.inf:
