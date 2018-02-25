@@ -197,3 +197,11 @@ def test_polymin_for_polynomials_with_known_minima_and_bounds():
 
     # x^2, [3, 9] --> 3
     assert impax.mins._findpolymin([0, 1], (3, 9)) == 3
+
+def test_ambiguous_cases():
+
+    # -x^2, [-1, 1] --> -1?
+    assert impax.mins._findpolymin([0, -1], (-1, 1)) == -1
+
+    # 0, [-1, 1] --> -1?
+    assert impax.mins._findpolymin([0, 0], (-1, 1)) == -1
