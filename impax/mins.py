@@ -8,21 +8,26 @@ import warnings
 
 def _findpolymin(coeffs, bounds=(-np.inf, np.inf)):
     '''
-    Computes the min value `t_star` for a set of coefficients (gammas)
-    for a polynomial damage function
+    Minimize a polynomial given the coefficients on [x^1, x^2, ...]
+
+    .. note::
+
+        The coefficients given in the ``coeffs`` list must be in _ascending_
+        power order and must not contain the zeroth-order term.
 
 
     Parameters
     ----------
     coeffs: :py:class `~xarray.DataArray`
-        coefficients for the gammas used to compute the analytic min
+        coefficients on a len(coeffs)-order polynomial in ascending power order
+        _not_ including the zeroth-order term.
 
     bounds: list
-       min and max temp values to evaluate derivative at
+       min and max temp values at which to find minimum
 
     Returns
     -------
-        int: t_star
+        int: minimizing value of the polynomial (not the minimum value)
 
     '''
     minx = float(min(bounds))
@@ -62,27 +67,86 @@ def _findpolymin(coeffs, bounds=(-np.inf, np.inf)):
 
     return possibles[index]
 
-def minimize_polynomial(da, dim='prednames', bounds=None):
+def minimize_polynomial(da, dim='prednames', bounds=(-np.inf, np.inf)):
     '''
-    Constructs the t_star-based weather data array by applying
-    `np.apply_along_axis` to each predictor dimension and construcing data
-    variables up to the order specified in `prednames`
+    Finds the minimizing values of polynomials given an array of coefficients
+
+    .. note::
+
+        The coefficients along the dimension ``dim`` must be in _ascending_
+        power order and must not contain the zeroth-order term.
+    
 
     Parameters
     ----------
     da: DataArray
-        :py:class:`~xarray.DataArray` of betas by hierid by predname by outcome
+        :py:class:`~xarray.DataArray` of coefficients of a
+        ``(da.size[dim])``-order polynomial in ascending power order along the
+        dimension ``dim``. The coefficients must not contain the zeroth-order
+        term.
 
-    dim: str
-        dimension to evaluate the coefficients at
+    dim: str, optional
+        dimension along which to evaluate the coefficients (default
+        ``prednames``)
 
-    bounds: list
-        values to evaluate between
+    bounds: list, optional
+        domain on the polynomial within which to search for the minimum value,
+        default ``(-inf, inf)``
 
     Returns
     -------
     DataArray
-        :py:class:`~xarray.DataArray` of reconstructed weather at t_star
+        :py:class:`~xarray.DataArray` in the same shape as da, with the
+        minimizing value of the polynomial raised to the appropriate power
+        in place of each coefficient
+
+    Examples
+    --------
+
+    Create an array with two functions:
+
+    ..math::
+
+        \begin{array}{rcl}
+            f_1 & = & x^2 \\
+            f_2 & = & -x^2 + 2x
+        \end{array}
+
+    This is specified as a 2-dimensional :py:class:`xarray.DataArray`:
+
+    .. code-block:: python
+
+        >>> da = xr.DataArray(
+        ...     [[0, 1],   # x^2
+        ...      [2, -1]], # -x^2 + 2x
+        ...     dims=('spec', 'x'),
+        ...     coords={'spec': ['f1', 'f2'], 'x': ['x1', 'x2']})
+        ...
+
+    These functions can be minimized using
+    :py:func:`impax.mins.minimize_polynomial`:
+
+    .. code-block:: python
+
+        >>> minimize_polynomial(da, dim='x')
+        <xarray.DataArray (spec: 2, x: 2)>
+        array([[  0.,   0.],
+               [-inf,  inf]])
+        Coordinates:
+          * x        (x) <U2 'x1' 'x2'
+          * spec     (spec) <U2 'f1' 'f2'
+
+    Use the same function, but impose the domain limit :math:`[2, 4]`:
+
+    .. code-block:: python
+
+        >>> minimize_polynomial(da, dim='x', bounds=[2, 4])
+        <xarray.DataArray (spec: 2, x: 2)>
+        array([[  2.,   4.],
+               [  4.,  16.]])
+        Coordinates:
+          * x        (x) <U2 'x1' 'x2'
+          * spec     (spec) <U2 'f1' 'f2'
 
     '''
     t_star_values = np.apply_along_axis(
