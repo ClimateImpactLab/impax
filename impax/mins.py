@@ -134,25 +134,29 @@ def minimize_polynomial(da, dim='prednames', bounds=(-np.inf, np.inf)):
 
     .. code-block:: python
 
-        >>> minimize_polynomial(da, dim='x')
+        >>> minimize_polynomial(
+        ...     da, dim='x') # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
+        ...
         <xarray.DataArray (spec: 2, x: 2)>
         array([[  0.,   0.],
                [-inf,  inf]])
         Coordinates:
-          * x        (x) <U2 'x1' 'x2'
-          * spec     (spec) <U2 'f1' 'f2'
+          * x        (x) ... 'x1' 'x2'
+          * spec     (spec) ... 'f1' 'f2'
 
     Use the same function, but impose the domain limit :math:`[2, 4]`:
 
     .. code-block:: python
 
-        >>> minimize_polynomial(da, dim='x', bounds=[2, 4])
+        >>> minimize_polynomial(
+        ...     da, dim='x', bounds=[2, 4])
+        ...     # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
         <xarray.DataArray (spec: 2, x: 2)>
         array([[  2.,   4.],
                [  4.,  16.]])
         Coordinates:
-          * x        (x) <U2 'x1' 'x2'
-          * spec     (spec) <U2 'f1' 'f2'
+          * x        (x) ... 'x1' 'x2'
+          * spec     (spec) ... 'f1' 'f2'
 
     '''
     t_star_values = np.apply_along_axis(
