@@ -1,5 +1,7 @@
 Welcome to impax's documentation!
-====================================================================================================
+==================================================
+
+This package contains tools for projecting impacts at the Climate Impact Lab
 
 Contents:
 
