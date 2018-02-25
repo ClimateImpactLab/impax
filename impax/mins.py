@@ -6,7 +6,7 @@ import warnings
 
 
 
-def _findpolymin(coeffs, min_max):
+def _findpolymin(coeffs, bounds=(-np.inf, np.inf)):
     '''
     Computes the min value `t_star` for a set of coefficients (gammas)
     for a polynomial damage function
@@ -17,7 +17,7 @@ def _findpolymin(coeffs, min_max):
     coeffs: :py:class `~xarray.DataArray`
         coefficients for the gammas used to compute the analytic min
 
-    min_max: list
+    bounds: list
        min and max temp values to evaluate derivative at
 
     Returns
@@ -25,12 +25,14 @@ def _findpolymin(coeffs, min_max):
         int: t_star
 
     '''
-    minx = np.asarray(min_max).min()
-    maxx = np.asarray(min_max).max()
+    minx = float(min(bounds))
+    maxx = float(max(bounds))
 
     # Construct the derivative
-    derivcoeffs = np.array(coeffs) * np.arange(1, len(coeffs) + 1)
-    roots = np.roots(derivcoeffs[::-1])
+    # derivcoeffs = np.array(coeffs) * np.arange(1, len(coeffs) + 1)
+    # roots = np.roots(derivcoeffs[::-1])
+
+    roots = np.poly1d(list(coeffs[::-1]) + [0]).deriv().roots
 
     # Filter out complex roots; note: have to apply real_if_close to individual
     # values, not array until filtered
@@ -48,7 +50,7 @@ def _findpolymin(coeffs, min_max):
         
     # polyval doesn't handle infs well
     if minx == -np.inf:
-        if len(coeffs) % 2 == 1: # largest power is even
+        if len(coeffs) % 2 == 0: # largest power is even
             values[-2] = -np.inf if coeffs[-1] < 0 else np.inf
         else: # largest power is odd
             values[-2] = np.inf if coeffs[-1] < 0 else -np.inf
@@ -84,7 +86,7 @@ def minimize_polynomial(da, dim='prednames', bounds=None):
 
     '''
     t_star_values = np.apply_along_axis(
-        _findpolymin, da.get_axis_num(dim), da.values, min_max = bounds)
+        _findpolymin, da.get_axis_num(dim), da.values, bounds = bounds)
 
     if t_star_values.shape != tuple(
             [s for i, s in enumerate(da.shape) if i != da.get_axis_num(dim)]):
