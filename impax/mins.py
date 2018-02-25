@@ -1,9 +1,9 @@
+
 from __future__ import absolute_import
-import os
+
 import xarray as xr
 import numpy as np
 import warnings
-
 
 
 def _findpolymin(coeffs, bounds=(-np.inf, np.inf)):
@@ -43,29 +43,35 @@ def _findpolymin(coeffs, bounds=(-np.inf, np.inf)):
     # values, not array until filtered
     possibles = (
         list(filter(
-            lambda root: np.real_if_close(root).imag == 0 and np.real_if_close(root) >= minx and np.real_if_close(root) <= maxx,
+            lambda root:
+                np.real_if_close(root).imag == 0
+                and np.real_if_close(root) >= minx
+                and np.real_if_close(root) <= maxx,
             roots)))
 
     possibles = list(np.real_if_close(possibles)) + [minx, maxx]
 
-    with warnings.catch_warnings(): # catch warning from using infs
+    with warnings.catch_warnings():  # catch warning from using infs
         warnings.simplefilter("ignore")
-    
-        values = np.polyval(list(coeffs[::-1]) + [0], np.real_if_close(possibles))  
-        
+
+        values = np.polyval(
+            list(coeffs[::-1]) + [0],
+            np.real_if_close(possibles))
+
     # polyval doesn't handle infs well
     if minx == -np.inf:
-        if len(coeffs) % 2 == 0: # largest power is even
+        if len(coeffs) % 2 == 0:  # largest power is even
             values[-2] = -np.inf if coeffs[-1] < 0 else np.inf
-        else: # largest power is odd
+        else:  # largest power is odd
             values[-2] = np.inf if coeffs[-1] < 0 else -np.inf
-            
+
     if maxx == np.inf:
         values[-1] = np.inf if coeffs[-1] > 0 else -np.inf
-    
+
     index = np.argmin(values)
 
     return possibles[index]
+
 
 def minimize_polynomial(da, dim='prednames', bounds=(-np.inf, np.inf)):
     '''
@@ -75,7 +81,7 @@ def minimize_polynomial(da, dim='prednames', bounds=(-np.inf, np.inf)):
 
         The coefficients along the dimension ``dim`` must be in _ascending_
         power order and must not contain the zeroth-order term.
-    
+
 
     Parameters
     ----------
@@ -150,7 +156,7 @@ def minimize_polynomial(da, dim='prednames', bounds=(-np.inf, np.inf)):
 
     '''
     t_star_values = np.apply_along_axis(
-        _findpolymin, da.get_axis_num(dim), da.values, bounds = bounds)
+        _findpolymin, da.get_axis_num(dim), da.values, bounds=bounds)
 
     if t_star_values.shape != tuple(
             [s for i, s in enumerate(da.shape) if i != da.get_axis_num(dim)]):

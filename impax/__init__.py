@@ -11,7 +11,7 @@ __version__ = '0.1.1'
 _module_imports = (
     minimize_polynomial,
     construct_covars,
-    construct_weather, 
+    construct_weather,
     read_csvv,
     MultivariateNormalEstimator
 )

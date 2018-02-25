@@ -46,7 +46,7 @@ def find_polymin_from_roots(roots, bounds=(-np.inf, np.inf), scale=1):
     .. math::
 
         [0, 2]\rightarrow f(x)=(x-0)(x-2)\rightarrow\integral_x f(x)=1/3x^3-x^2
-    
+
     This function has roots 0, 2, but still has an infinite minimum value.
     Bounds can be placed on the minimization problem with the `bounds`
     argument:
@@ -77,9 +77,9 @@ def find_polymin_from_roots(roots, bounds=(-np.inf, np.inf), scale=1):
         p2(c)
         if not np.isinf(c)
         else (
-            np.sign(p2.coeffs[0])*np.sign(c)*np.inf
-            if (len(p2.coeffs)%2 == 0)
-            else np.sign(p2.coeffs[0])*np.inf)
+            np.sign(p2.coeffs[0]) * np.sign(c) * np.inf
+            if (len(p2.coeffs) % 2 == 0)
+            else np.sign(p2.coeffs[0]) * np.inf)
         for c in candidates])
 
     return candidates[vals.argmin()], min(vals)
@@ -105,25 +105,25 @@ def known_minimized_polynomial(request):
     if request.param == 0:
         test_roots = np.array([3, 5, -1, -23])
         bounds = (-np.inf, np.inf)
-        scale=1
+        scale = 1
         known_minimizer = -np.inf
 
     elif request.param == 1:
         test_roots = np.array([3, 5, -1, -23])
         bounds = (0, np.inf)
-        scale=1
+        scale = 1
         known_minimizer = 0
 
     elif request.param == 2:
         test_roots = np.array([3, 5, -1, -23])
         bounds = (-23, 50)
-        scale=1
+        scale = 1
         known_minimizer = -1
 
     elif request.param == 3:
         test_roots = np.array([3, 5, -1, -23])
         bounds = (-23, 5)
-        scale=-1
+        scale = -1
         known_minimizer = -23
 
     minimizer, minimized = find_polymin_from_roots(
@@ -131,7 +131,7 @@ def known_minimized_polynomial(request):
 
     assert known_minimizer == minimizer
 
-    p = np.poly1d(test_roots, r=True)*scale
+    p = np.poly1d(test_roots, r=True) * scale
     p2 = np.poly1d(list(p.coeffs / np.arange(len(p.coeffs), 0, -1)) + [0])
 
     da = xr.DataArray(
@@ -147,14 +147,16 @@ def test_polymin_for_function_constructed_from_roots(
 
     da, dim, bounds, polymin = known_minimized_polynomial
 
-    minned = float(impax.mins.minimize_polynomial(da, 'predname', bounds).sel(predname='x'))
+    minned = float(
+        impax.mins.minimize_polynomial(da, 'predname', bounds)
+        .sel(predname='x'))
 
     assert (polymin == minned)
 
 
 def test_polymin_for_arbitrary_polynomial_within_ranges():
     test_da = xr.DataArray(
-        (np.random.random((6, 10, 10)) - 0.5)*12,
+        (np.random.random((6, 10, 10)) - 0.5) * 12,
         dims=('coeffs', 'var1', 'var2'),
         coords={'coeffs': range(1, 7)})
 
@@ -197,6 +199,7 @@ def test_polymin_for_polynomials_with_known_minima_and_bounds():
 
     # x^2, [3, 9] --> 3
     assert impax.mins._findpolymin([0, 1], (3, 9)) == 3
+
 
 def test_ambiguous_cases():
 
