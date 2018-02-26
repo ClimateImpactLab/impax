@@ -1,9 +1,9 @@
 from __future__ import absolute_import
-import csv
-import xarray as xr
+
 import pandas as pd
 import numpy as np
-from scipy.stats import multivariate_normal as mn
+import csv
+from scipy.stats import multivariate_normal
 
 import warnings
 
@@ -20,7 +20,8 @@ def read_csvv(csvv_path):
     Returns
     -------
     estimator : MultivariateNormalEstimator
-        :py:class:`Gamma` object with median and VCV matrix indexed by prednames, covarnames, and outcomes
+        :py:class:`Gamma` object with median and VCV matrix indexed by
+        prednames, covarnames, and outcomes
 
     '''
 
@@ -40,38 +41,46 @@ def read_csvv(csvv_path):
                 data['prednames'] = [i.strip() for i in next(reader)]
             if row[0] == 'covarnames':
                 data['covarnames'] = [i.strip() for i in next(reader)]
-            if row[0] == 'outcome': 
-                data['outcome'] =[cv.strip() for cv in next(reader)]
+            if row[0] == 'outcome':
+                data['outcome'] = [cv.strip() for cv in next(reader)]
 
     index = pd.MultiIndex.from_tuples(
-        list(zip(data['outcome'], data['prednames'], data['covarnames'])), 
+        list(zip(data['outcome'], data['prednames'], data['covarnames'])),
         names=['outcome', 'prednames', 'covarnames'])
 
     g = MultivariateNormalEstimator(data['gamma'], data['gammavcv'], index)
 
-    return g 
+    return g
 
 
 def get_gammas(*args, **kwargs):
-    warnings.warn('get_gammas has been deprecated, and has been replaced with read_csvv', DeprecationWarning)
+    warnings.warn(
+        'get_gammas has been deprecated, and has been replaced with read_csvv',
+        DeprecationWarning)
+
     return read_csvv(*args, **kwargs)
 
 
 class MultivariateNormalEstimator(object):
     '''
-    Stores a median and residual VCV matrix for multidimensional variables with named indices
-    and provides multivariate sampling and statistical analysis functions
+    Stores a median and residual VCV matrix for multidimensional variables with
+    named indices and provides multivariate sampling and statistical analysis
+    functions
 
     Parameters
     ----------
-    coefficients: array 
-        length :math:`(m_1*m_2*\cdots*m_n)` 1-d :py:class:`numpy.ndarray` with regression coefficients
+    coefficients: array
+        length :math:`(m_1*m_2*\cdots*m_n)` 1-d :py:class:`numpy.ndarray` with
+        regression coefficients
 
     vcv: array
-        :math:`(m_1*m_2*\cdots*m_n) x (m_1*m_2*\cdots*m_n)` :py:class:`numpy.ndarray` with variance-covariance matrix for multivariate distribution
+        :math:`(m_1*m_2*\cdots*m_n) x (m_1*m_2*\cdots*m_n)`
+        :py:class:`numpy.ndarray` with variance-covariance matrix for
+        multivariate distribution
 
     index: Index
-        :py:class:`~pandas.Index` or :math:`(m_1*m_2*\cdots*m_n)` 1-d :py:class:`~pandas.MultiIndex` describing the multivariate space
+        :py:class:`~pandas.Index` or :math:`(m_1*m_2*\cdots*m_n)` 1-d
+        :py:class:`~pandas.MultiIndex` describing the multivariate space
 
     '''
 
@@ -95,20 +104,24 @@ class MultivariateNormalEstimator(object):
     def sample(self, seed=None):
         '''
         Sample from the multivariate normal distribution
-        
+
         Takes a draw from a multivariate distribution and returns
         an :py:class:`xarray.DataArray` of parameter estimates.
 
         Returns
         ----------
         draw : DataArray
-            :py:class:`~xarray.DataArray` of parameter estimates drawn from the multivariate normal
+            :py:class:`~xarray.DataArray` of parameter estimates drawn from the
+            multivariate normal
 
         '''
         if seed is not None:
-            warnings.warn(
-                'Sampling with a seed has been deprecated. In future releases, this will be up to the user.',
+            warnings.warn((
+                'Sampling with a seed has been deprecated. In future releases,'
+                ' this will be up to the user.'),
                 DeprecationWarning)
             np.random.seed(seed)
 
-        return pd.Series(mn.rvs(self.coefficients, self.vcv), index=self.index).to_xarray()
+        return pd.Series(
+            multivariate_normal.rvs(self.coefficients, self.vcv),
+            index=self.index).to_xarray()
