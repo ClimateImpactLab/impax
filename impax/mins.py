@@ -1,90 +1,166 @@
+
 from __future__ import absolute_import
-import os
+
 import xarray as xr
 import numpy as np
 import warnings
 
 
-
-def _findpolymin(coeffs, min_max):
+def _findpolymin(coeffs, bounds=(-np.inf, np.inf)):
     '''
-    Computes the min value `t_star` for a set of coefficients (gammas)
-    for a polynomial damage function
+    Minimize a polynomial given the coefficients on [x^1, x^2, ...]
+
+    .. note::
+
+        The coefficients given in the ``coeffs`` list must be in _ascending_
+        power order and must not contain the zeroth-order term.
 
 
     Parameters
     ----------
     coeffs: :py:class `~xarray.DataArray`
-        coefficients for the gammas used to compute the analytic min
+        coefficients on a len(coeffs)-order polynomial in ascending power order
+        _not_ including the zeroth-order term.
 
-    min_max: list
-       min and max temp values to evaluate derivative at
+    bounds: list
+       min and max temp values at which to find minimum
 
     Returns
     -------
-        int: t_star
+        int: minimizing value of the polynomial (not the minimum value)
 
     '''
-    minx = np.asarray(min_max).min()
-    maxx = np.asarray(min_max).max()
+    minx = float(min(bounds))
+    maxx = float(max(bounds))
 
     # Construct the derivative
-    derivcoeffs = np.array(coeffs[1:]) * np.arange(1, len(coeffs))
-    roots = np.roots(derivcoeffs[::-1])
+    # derivcoeffs = np.array(coeffs) * np.arange(1, len(coeffs) + 1)
+    # roots = np.roots(derivcoeffs[::-1])
+
+    roots = np.poly1d(list(coeffs[::-1]) + [0]).deriv().roots
 
     # Filter out complex roots; note: have to apply real_if_close to individual
     # values, not array until filtered
     possibles = (
         list(filter(
-            lambda root: np.real_if_close(root).imag == 0 and np.real_if_close(root) >= minx and np.real_if_close(root) <= maxx,
+            lambda root:
+                np.real_if_close(root).imag == 0
+                and np.real_if_close(root) >= minx
+                and np.real_if_close(root) <= maxx,
             roots)))
 
     possibles = list(np.real_if_close(possibles)) + [minx, maxx]
 
-    with warnings.catch_warnings(): # catch warning from using infs
+    with warnings.catch_warnings():  # catch warning from using infs
         warnings.simplefilter("ignore")
-    
-        values = np.polyval(coeffs[::-1], np.real_if_close(possibles))  
-        
+
+        values = np.polyval(
+            list(coeffs[::-1]) + [0],
+            np.real_if_close(possibles))
+
     # polyval doesn't handle infs well
     if minx == -np.inf:
-        if len(coeffs) % 2 == 1: # largest power is even
+        if len(coeffs) % 2 == 0:  # largest power is even
             values[-2] = -np.inf if coeffs[-1] < 0 else np.inf
-        else: # largest power is odd
+        else:  # largest power is odd
             values[-2] = np.inf if coeffs[-1] < 0 else -np.inf
-            
+
     if maxx == np.inf:
         values[-1] = np.inf if coeffs[-1] > 0 else -np.inf
-    
+
     index = np.argmin(values)
 
     return possibles[index]
 
-def minimize_polynomial(da, dim='prednames', bounds=None):
+
+def minimize_polynomial(da, dim='prednames', bounds=(-np.inf, np.inf)):
     '''
-    Constructs the t_star-based weather data array by applying
-    `np.apply_along_axis` to each predictor dimension and construcing data
-    variables up to the order specified in `prednames`
+    Finds the minimizing values of polynomials given an array of coefficients
+
+    .. note::
+
+        The coefficients along the dimension ``dim`` must be in _ascending_
+        power order and must not contain the zeroth-order term.
+
 
     Parameters
     ----------
     da: DataArray
-        :py:class:`~xarray.DataArray` of betas by hierid by predname by outcome
+        :py:class:`~xarray.DataArray` of coefficients of a
+        ``(da.size[dim])``-order polynomial in ascending power order along the
+        dimension ``dim``. The coefficients must not contain the zeroth-order
+        term.
 
-    dim: str
-        dimension to evaluate the coefficients at
+    dim: str, optional
+        dimension along which to evaluate the coefficients (default
+        ``prednames``)
 
-    bounds: list
-        values to evaluate between
+    bounds: list, optional
+        domain on the polynomial within which to search for the minimum value,
+        default ``(-inf, inf)``
 
     Returns
     -------
     DataArray
-        :py:class:`~xarray.DataArray` of reconstructed weather at t_star
+        :py:class:`~xarray.DataArray` in the same shape as da, with the
+        minimizing value of the polynomial raised to the appropriate power
+        in place of each coefficient
+
+    Examples
+    --------
+
+    Create an array with two functions:
+
+    ..math::
+
+        \begin{array}{rcl}
+            f_1 & = & x^2 \\
+            f_2 & = & -x^2 + 2x
+        \end{array}
+
+    This is specified as a 2-dimensional :py:class:`xarray.DataArray`:
+
+    .. code-block:: python
+
+        >>> da = xr.DataArray(
+        ...     [[0, 1],   # x^2
+        ...      [2, -1]], # -x^2 + 2x
+        ...     dims=('spec', 'x'),
+        ...     coords={'spec': ['f1', 'f2'], 'x': ['x1', 'x2']})
+        ...
+
+    These functions can be minimized using
+    :py:func:`impax.mins.minimize_polynomial`:
+
+    .. code-block:: python
+
+        >>> minimize_polynomial(
+        ...     da, dim='x') # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
+        ...
+        <xarray.DataArray (spec: 2, x: 2)>
+        array([[  0.,   0.],
+               [-inf,  inf]])
+        Coordinates:
+          * x        (x) ... 'x1' 'x2'
+          * spec     (spec) ... 'f1' 'f2'
+
+    Use the same function, but impose the domain limit :math:`[2, 4]`:
+
+    .. code-block:: python
+
+        >>> minimize_polynomial(
+        ...     da, dim='x', bounds=[2, 4])
+        ...     # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
+        <xarray.DataArray (spec: 2, x: 2)>
+        array([[  2.,   4.],
+               [  4.,  16.]])
+        Coordinates:
+          * x        (x) ... 'x1' 'x2'
+          * spec     (spec) ... 'f1' 'f2'
 
     '''
     t_star_values = np.apply_along_axis(
-        _findpolymin, da.get_axis_num(dim), da.values, min_max = bounds)
+        _findpolymin, da.get_axis_num(dim), da.values, bounds=bounds)
 
     if t_star_values.shape != tuple(
             [s for i, s in enumerate(da.shape) if i != da.get_axis_num(dim)]):

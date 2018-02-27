@@ -6,8 +6,8 @@
 import pytest
 from click.testing import CliRunner
 
-from impax import impax
 from impax import cli
+
 
 @pytest.fixture
 def response():

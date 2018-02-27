@@ -28,7 +28,7 @@ test_requirements = [
 
 setup(
     name='impax',
-    version='0.1.1',
+    version='0.1.2',
     description="Impact Forecasting for the Climate Impact Lab",
     long_description=readme + '\n\n' + history,
     author="Justin Simcock",
